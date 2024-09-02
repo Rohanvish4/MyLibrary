@@ -4,10 +4,10 @@
     android:id="@+id/parent"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_centerInParent="true"
     android:layout_margin="15dp"
     app:cardCornerRadius="10dp"
-    app:cardElevation="10dp"
-    android:layout_centerInParent="true">
+    app:cardElevation="10dp">
 
     <RelativeLayout
         android:layout_width="wrap_content"
@@ -61,21 +61,28 @@
                 android:id="@+id/autherTxt"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Auther:" />
+                android:text="Author:  "
+                android:layout_marginStart="10dp
+"/>
 
             <TextView
                 android:id="@+id/txtAuther"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/autherTxt"
-                android:text="Auther Text" />
+                android:layout_toEndOf="@+id/autherTxt"
+
+
+                android:text="Auther Text"
+                android:textStyle="bold" />
 
             <TextView
                 android:id="@+id/shortDesc"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/txtAuther"
-                android:text="Short Description" />
+                android:text="@string/short_description"
+                android:layout_marginStart="5dp"
+                android:layout_marginTop="5dp"/>
 
             <ImageView
                 android:id="@+id/btnUp"
@@ -85,6 +92,16 @@
                 android:layout_alignParentEnd="true"
                 android:src="@drawable/ic_btn_up" />
 
+            <TextView
+                android:id="@+id/btnDelete"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/shortDesc"
+                android:layout_toLeftOf="@+id/btnUp"
+                android:text="@string/delete"
+                android:textColor="@color/btnDelete"
+                android:layout_marginEnd="10dp"
+                android:visibility="visible"/>
 
         </RelativeLayout>
 

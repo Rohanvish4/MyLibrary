@@ -1,5 +1,7 @@
 package com.RoVoT.mylibrary;
 
+import static com.RoVoT.mylibrary.BookActivity.BOOK_ID_KEY;
+
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
@@ -14,23 +16,31 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 
 import java.util.ArrayList;
-import java.util.PrimitiveIterator;
 
 public class BooksRecViewAdapter extends RecyclerView.Adapter<BooksRecViewAdapter.ViewHolder> {
 
     private static final String TAG = "BooksRecViewAdapter: started";
+//    private static final String TAG = "BookRecViewAdapter";
 
     private ArrayList<Book> books = new ArrayList<>();
     private Context mContext;
+    private String parentActivity;
 
-    public BooksRecViewAdapter(Context mContext) {
+//    public BooksRecViewAdapter(Context mContext) {
+//        this.mContext = mContext;
+//    }
+
+
+    public BooksRecViewAdapter(Context mContext, String parentActivity) {
         this.mContext = mContext;
+        this.parentActivity = parentActivity;
     }
 
     @NonNull
@@ -49,25 +59,129 @@ public class BooksRecViewAdapter extends RecyclerView.Adapter<BooksRecViewAdapte
                 .load(books.get(position).getImgUrl())
                 .into(holder.imgBook);
 
-        holder.txtAuther.setText(books.get(position).getAuther());
-        holder.txtDescription.setText(books.get(position).getAuther());
 
         holder.parent.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(mContext, books.get(position).getName() + " Selected", Toast.LENGTH_SHORT).show();
+
                 Intent intent = new Intent(mContext, BookActivity.class);
+                intent.putExtra(BOOK_ID_KEY, books.get(position).getId());
                 mContext.startActivity(intent);
 
             }
         });
+        holder.txtAuther.setText(books.get(position).getAuther());
+        holder.txtDescription.setText(books.get(position).getShortDesc());
 
 
         if (books.get(position).isExpanded()) {
             TransitionManager.beginDelayedTransition(holder.parent);
             holder.expandedRelLayout.setVisibility(View.VISIBLE);
             holder.btnDown.setVisibility(View.GONE);
-        } else {
+
+            switch (parentActivity) {
+                case "allBooks":
+                    holder.btnDelete.setVisibility(View.GONE);
+                    break;
+                case "alreadyRead":
+                    holder.btnDelete.setVisibility(View.VISIBLE);
+                    holder.btnDelete.setOnClickListener(new View.OnClickListener() {
+                        @SuppressLint("NotifyDataSetChanged")
+                        @Override
+                        public void onClick(View v) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                            builder.setMessage("Are you sure you want to delete " + books.get(position).getName() + "?");
+                            builder.setPositiveButton("Yes", (dialog, which) -> {
+                                if (Utils.getInstance().removeFromAlreadyRead(books.get(position))) {
+                                    Toast.makeText(mContext, "Book Removed", Toast.LENGTH_SHORT).show();
+                                    notifyDataSetChanged();
+                                }
+                            });
+                            builder.setNegativeButton("No", (dialog, which) -> Toast.makeText(mContext, "Task Aborted", Toast.LENGTH_SHORT).show());
+
+                            builder.create().show();
+                        }
+                    });
+                    break;
+                case "wantToRead":
+                    holder.btnDelete.setVisibility(View.VISIBLE);
+                    holder.btnDelete.setOnClickListener(new View.OnClickListener() {
+                        @SuppressLint("NotifyDataSetChanged")
+                        @Override
+                        public void onClick(View v) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                            builder.setMessage("Are you sure you want to delete " + books.get(position).getName() + "?");
+                            builder.setPositiveButton("Yes", (dialog, which) -> {
+                                if (Utils.getInstance().removeFromWantToRead(books.get(position))) {
+                                    Toast.makeText(mContext, "Book Removed", Toast.LENGTH_SHORT).show();
+                                    notifyDataSetChanged();
+                                }
+                            });
+                            builder.setNegativeButton("No", (dialog, which) -> {
+                                Toast.makeText(mContext, "Task Aborted", Toast.LENGTH_SHORT).show();
+
+                            });
+
+                            builder.create().show();
+                        }
+                    });
+
+
+                    break;
+                case "currentlyReading":
+                    holder.btnDelete.setVisibility(View.VISIBLE);
+                    holder.btnDelete.setOnClickListener(new View.OnClickListener() {
+                        @SuppressLint("NotifyDataSetChanged")
+                        @Override
+                        public void onClick(View v) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                            builder.setMessage("Are you sure you want to delete " + books.get(position).getName() + "?");
+                            builder.setPositiveButton("Yes", (dialog, which) -> {
+                                if (Utils.getInstance().removeFromCurrentlyReading(books.get(position))) {
+                                    Toast.makeText(mContext, "Book Removed", Toast.LENGTH_SHORT).show();
+                                    notifyDataSetChanged();
+                                }
+                            });
+                            builder.setNegativeButton("No", (dialog, which) -> {
+                                Toast.makeText(mContext, "Task Aborted", Toast.LENGTH_SHORT).show();
+
+                            });
+
+                            builder.create().show();
+                        }
+                    });
+
+                    break;
+                default:
+                    holder.btnDelete.setVisibility(View.VISIBLE);
+                    holder.btnDelete.setOnClickListener(new View.OnClickListener() {
+                        @SuppressLint("NotifyDataSetChanged")
+                        @Override
+                        public void onClick(View v) {
+                            AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+                            builder.setMessage("Are you sure you want to delete " + books.get(position).getName() + "?");
+                            builder.setPositiveButton("Yes", (dialog, which) -> {
+                                if (Utils.getInstance().removeFromFavoriteBooks(books.get(position))) {
+                                    Toast.makeText(mContext, "Book Removed", Toast.LENGTH_SHORT).show();
+                                    notifyDataSetChanged();
+                                }
+                            });
+                            builder.setNegativeButton("No", (dialog, which) -> {
+                                Toast.makeText(mContext, "Task Aborted", Toast.LENGTH_SHORT).show();
+
+                            });
+
+                            builder.create().show();
+                        }
+                    });
+
+
+                    break;
+            }
+        }
+
+
+        else {
             TransitionManager.beginDelayedTransition(holder.parent);
             holder.expandedRelLayout.setVisibility(View.GONE);
             holder.btnDown.setVisibility(View.VISIBLE);
@@ -81,6 +195,7 @@ public class BooksRecViewAdapter extends RecyclerView.Adapter<BooksRecViewAdapte
         return books.size();
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     public void setBooks(ArrayList<Book> books) {
         this.books = books;
         notifyDataSetChanged();
@@ -95,7 +210,7 @@ public class BooksRecViewAdapter extends RecyclerView.Adapter<BooksRecViewAdapte
 
         private ImageView btnDown, btnUp;
         private RelativeLayout expandedRelLayout;
-        private TextView txtAuther, txtDescription;
+        private TextView txtAuther, txtDescription, btnDelete;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -109,6 +224,7 @@ public class BooksRecViewAdapter extends RecyclerView.Adapter<BooksRecViewAdapte
             expandedRelLayout = itemView.findViewById(R.id.expandedRelLayout);
             txtAuther = itemView.findViewById(R.id.txtAuther);
             txtDescription = itemView.findViewById(R.id.shortDesc);
+            btnDelete = itemView.findViewById(R.id.btnDelete);
 
 
             btnDown.setOnClickListener(new View.OnClickListener() {
@@ -139,6 +255,7 @@ public class BooksRecViewAdapter extends RecyclerView.Adapter<BooksRecViewAdapte
 
                 }
             });
+            
 
 
         }
