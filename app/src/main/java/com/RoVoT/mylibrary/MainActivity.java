@@ -23,7 +23,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+//        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
 
 
@@ -37,6 +37,7 @@ public class MainActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(MainActivity.this, AllBooksActivity.class);
                 startActivity(intent);
+
             }
         });
 
@@ -45,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this , AlreadyReadBooksActivity.class);
                 startActivity(intent);
+
             }
         });
 
@@ -54,6 +56,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, WantToReadBookActivity.class);
                 startActivity(intent);
+
             }
         });
 
@@ -62,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, FavoriteBooksActivity.class);
                 startActivity(intent);
+
             }
         });
         btnCurrentlyReading.setOnClickListener(new View.OnClickListener() {
@@ -69,6 +73,7 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Intent intent = new Intent(MainActivity.this, CurrentlyReadingBooksActivity.class);
                 startActivity(intent);
+
 
             }
         });
@@ -98,12 +103,13 @@ public class MainActivity extends AppCompatActivity {
                 });
                 builder.create().show();
 
+
             }
         });
 
 
 
-        Utils.getInstance();
+        Utils.getInstance(this);
     }
 
     private void initView() {

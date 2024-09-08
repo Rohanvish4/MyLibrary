@@ -30,8 +30,8 @@ public class BooksRecViewAdapter extends RecyclerView.Adapter<BooksRecViewAdapte
 //    private static final String TAG = "BookRecViewAdapter";
 
     private ArrayList<Book> books = new ArrayList<>();
-    private Context mContext;
-    private String parentActivity;
+    private final Context mContext;
+    private final String parentActivity;
 
 //    public BooksRecViewAdapter(Context mContext) {
 //        this.mContext = mContext;
@@ -57,18 +57,17 @@ public class BooksRecViewAdapter extends RecyclerView.Adapter<BooksRecViewAdapte
         Glide.with(mContext)
                 .asBitmap()
                 .load(books.get(position).getImgUrl())
+                .placeholder(R.drawable.ic_launcher_background)
                 .into(holder.imgBook);
 
 
-        holder.parent.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+        holder.parent.setOnClickListener(v -> {
 
-                Intent intent = new Intent(mContext, BookActivity.class);
-                intent.putExtra(BOOK_ID_KEY, books.get(position).getId());
-                mContext.startActivity(intent);
+            Intent intent = new Intent(mContext, BookActivity.class);
+            intent.putExtra(BOOK_ID_KEY, books.get(position).getId());
+            mContext.startActivity(intent);
 
-            }
+
         });
         holder.txtAuther.setText(books.get(position).getAuther());
         holder.txtDescription.setText(books.get(position).getShortDesc());
@@ -92,14 +91,15 @@ public class BooksRecViewAdapter extends RecyclerView.Adapter<BooksRecViewAdapte
                             AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
                             builder.setMessage("Are you sure you want to delete " + books.get(position).getName() + "?");
                             builder.setPositiveButton("Yes", (dialog, which) -> {
-                                if (Utils.getInstance().removeFromAlreadyRead(books.get(position))) {
-                                    Toast.makeText(mContext, "Book Removed", Toast.LENGTH_SHORT).show();
-                                    notifyDataSetChanged();
+                                if (Utils.getInstance(mContext).removeFromAlreadyRead(books.get(position))) {
+                                    Toast.makeText(mContext, "Book Removed, Please reopen this Section", Toast.LENGTH_SHORT).show();
+                                    notifyItemRemoved(position);
                                 }
                             });
                             builder.setNegativeButton("No", (dialog, which) -> Toast.makeText(mContext, "Task Aborted", Toast.LENGTH_SHORT).show());
 
                             builder.create().show();
+
                         }
                     });
                     break;
@@ -112,17 +112,15 @@ public class BooksRecViewAdapter extends RecyclerView.Adapter<BooksRecViewAdapte
                             AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
                             builder.setMessage("Are you sure you want to delete " + books.get(position).getName() + "?");
                             builder.setPositiveButton("Yes", (dialog, which) -> {
-                                if (Utils.getInstance().removeFromWantToRead(books.get(position))) {
-                                    Toast.makeText(mContext, "Book Removed", Toast.LENGTH_SHORT).show();
-                                    notifyDataSetChanged();
+                                if (Utils.getInstance(mContext).removeFromWantToRead(books.get(position))) {
+                                    Toast.makeText(mContext, "Book Removed, Please reopen this Section", Toast.LENGTH_SHORT).show();
+                                    notifyItemRemoved(position);
                                 }
                             });
-                            builder.setNegativeButton("No", (dialog, which) -> {
-                                Toast.makeText(mContext, "Task Aborted", Toast.LENGTH_SHORT).show();
-
-                            });
+                            builder.setNegativeButton("No", (dialog, which) -> Toast.makeText(mContext, "Task Aborted", Toast.LENGTH_SHORT).show());
 
                             builder.create().show();
+
                         }
                     });
 
@@ -137,17 +135,16 @@ public class BooksRecViewAdapter extends RecyclerView.Adapter<BooksRecViewAdapte
                             AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
                             builder.setMessage("Are you sure you want to delete " + books.get(position).getName() + "?");
                             builder.setPositiveButton("Yes", (dialog, which) -> {
-                                if (Utils.getInstance().removeFromCurrentlyReading(books.get(position))) {
-                                    Toast.makeText(mContext, "Book Removed", Toast.LENGTH_SHORT).show();
-                                    notifyDataSetChanged();
+                                if (Utils.getInstance(mContext).removeFromCurrentlyReading(books.get(position))) {
+                                    Toast.makeText(mContext, "Book Removed, Please reopen this Section", Toast.LENGTH_SHORT).show();
+                                    notifyItemRemoved(position);
                                 }
                             });
-                            builder.setNegativeButton("No", (dialog, which) -> {
-                                Toast.makeText(mContext, "Task Aborted", Toast.LENGTH_SHORT).show();
-
-                            });
+                            builder.setNegativeButton("No", (dialog, which) -> Toast.makeText(mContext, "Task Aborted", Toast.LENGTH_SHORT).show());
 
                             builder.create().show();
+
+
                         }
                     });
 
@@ -161,17 +158,15 @@ public class BooksRecViewAdapter extends RecyclerView.Adapter<BooksRecViewAdapte
                             AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
                             builder.setMessage("Are you sure you want to delete " + books.get(position).getName() + "?");
                             builder.setPositiveButton("Yes", (dialog, which) -> {
-                                if (Utils.getInstance().removeFromFavoriteBooks(books.get(position))) {
-                                    Toast.makeText(mContext, "Book Removed", Toast.LENGTH_SHORT).show();
-                                    notifyDataSetChanged();
+                                if (Utils.getInstance(mContext).removeFromFavorites(books.get(position))) {
+                                    Toast.makeText(mContext, "Book Removed, Please reopen this Section", Toast.LENGTH_SHORT).show();
+                                    notifyItemRemoved(position);
                                 }
                             });
-                            builder.setNegativeButton("No", (dialog, which) -> {
-                                Toast.makeText(mContext, "Task Aborted", Toast.LENGTH_SHORT).show();
-
-                            });
+                            builder.setNegativeButton("No", (dialog, which) -> Toast.makeText(mContext, "Task Aborted", Toast.LENGTH_SHORT).show());
 
                             builder.create().show();
+
                         }
                     });
 
@@ -237,6 +232,7 @@ public class BooksRecViewAdapter extends RecyclerView.Adapter<BooksRecViewAdapte
                     book.setExpanded(!book.isExpanded()); // Collapse the item if it’s expanded
                     notifyItemChanged(getAdapterPosition());
 
+
                 }
             });
             btnUp.setOnClickListener(new View.OnClickListener() {
@@ -252,6 +248,7 @@ public class BooksRecViewAdapter extends RecyclerView.Adapter<BooksRecViewAdapte
                     }
 
                     notifyItemChanged(getAdapterPosition());
+
 
                 }
             });

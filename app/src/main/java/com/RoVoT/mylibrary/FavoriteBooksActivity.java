@@ -2,14 +2,16 @@ package com.RoVoT.mylibrary;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import java.util.Objects;
 
 public class FavoriteBooksActivity extends AppCompatActivity {
 
@@ -24,13 +26,16 @@ public class FavoriteBooksActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+//        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_favorite_books);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.webView), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
-        });
+
+        Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+
+        TextView txtEmpty = findViewById(R.id.txtEmpty);
+        if (Utils.getFavoriteBooks() == null || Utils.getFavoriteBooks().isEmpty()) {
+            txtEmpty.setVisibility(View.VISIBLE);
+        }
+
 
         RecyclerView recyclerView = findViewById(R.id.bookRecView);
         BooksRecViewAdapter adapter = new BooksRecViewAdapter(this, "favorite");
@@ -39,9 +44,11 @@ public class FavoriteBooksActivity extends AppCompatActivity {
          recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
          adapter.setBooks(Utils.getFavoriteBooks());
-
-
-
-
+    }
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == android.R.id.home){
+            onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

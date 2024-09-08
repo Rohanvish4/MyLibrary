@@ -3,14 +3,13 @@ package com.RoVoT.mylibrary;
 import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
-import android.widget.Button;
+import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
 
-import androidx.activity.EdgeToEdge;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -29,10 +28,15 @@ public class CurrentlyReadingBooksActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
+//        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_currently_reading_books);
 
+        TextView txtEmpty = findViewById(R.id.txtEmpty);
+        if (Utils.getCurrentlyReadingBooks() == null || Utils.getCurrentlyReadingBooks().isEmpty()) {
+            txtEmpty.setVisibility(View.VISIBLE);
+        }
 
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Consider using a static inner class or top-level class for the listener
 //        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -42,9 +46,6 @@ public class CurrentlyReadingBooksActivity extends AppCompatActivity {
 //        });
 //
 
-        TextView textView = findViewById(R.id.txtViewChecker);
-        textView.setText("Currently Reading Books");
-
         RecyclerView recyclerView2 = findViewById(R.id.bookRecVieww);
         BooksRecViewAdapter adapter2 = new BooksRecViewAdapter(this, "currentlyReading");
         recyclerView2.setAdapter(adapter2);
@@ -52,10 +53,11 @@ public class CurrentlyReadingBooksActivity extends AppCompatActivity {
 
         // Consider fetching the list in a background thread or using lazy initialization
         adapter2.setBooks(Utils.getCurrentlyReadingBooks());
-
-
-
-
-
+    }
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == android.R.id.home){
+            onBackPressed();
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
